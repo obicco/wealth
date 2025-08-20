@@ -1,12 +1,44 @@
 # Gradle
-.gradle
-/build/
+.gradle/
+**/build/
 !gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 # Gradle Wrapper
 gradle-app.setting
+
+# Gradle Build Cache
+.gradle-cache/
+
+# Gradle daemon
+.gradle/daemon/
+
+# Gradle native
+.gradle/native/
+
+# Gradle build outputs
+build/
+dist/
+out/
+
+# Gradle wrapper validation
+gradle/wrapper/gradle-wrapper.jar.asc
+
+# Gradle local configuration
+gradle.properties
+local.properties
+
+# Gradle lock files
+gradle/dependency-locks/
+*.lock
+
+# Gradle incremental compilation
+.gradle/buildOutputCleanup/
+.gradle/checksums/
+.gradle/configuration-cache/
+.gradle/file-system.probe
 
 # IDE - IntelliJ IDEA
 .idea/
