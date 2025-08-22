@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: Wealth Management API
+  description: API for managing user accounts, portfolios, and transactions in a wealth management system.
+  version: 0.0.1
+servers:
+    - url: http://localhost:8080
+      description: Local server
+tags:
+  - name: Transactions
+    description: Operations related to financial transactions
+paths:
+  #getTransactions
+  /transactions:
+      get:
+          tags:
+          - Transactions
+          summary: Retrieve transactions
+          operationId: getTransactions
+          parameters:
+            - in: query
+              name: assetType
+              required: false
+              schema:
+                type: string
+                description: Filter transactions by asset type (e.g., stock, bond, mutual fund)
+          responses:
+            '200':
+                description: A list of transactions
+                content:
+                  application/json:
+                      schema:
+                        $ref: './schemas/Transactions.yaml'
+
+            '500':
+                description: Server error
+                content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/ServerError.yaml'

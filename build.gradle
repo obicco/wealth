@@ -2,13 +2,19 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
+
+    id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
+    id 'org.openapi.generator' version '7.14.0'
 }
 
 group = 'io.github.obicco.wealth'
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+bootRun {
+    systemProperties = System.properties as Map<String, ?>
 }
 
 dependencies {
@@ -18,6 +24,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+    implementation('org.openapitools:openapi-generator-gradle-plugin:7.14.0') {
+        exclude module: 'slf4j-simple'
+    }
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -27,3 +39,49 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+// OpenApi
+def spec = "$projectDir/doc/openapi/openapi.yaml"
+def generatedSourcesDir = "$projectDir/build/generated/openapi"
+
+sourceSets {
+    main {
+        java {
+            srcDir("$generatedSourcesDir/src/main/java")
+        }
+    }
+}
+
+springBoot {
+    buildInfo()
+}
+
+openApiValidate {
+    inputSpec = "$spec".toString()
+    recommend = true;
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$spec".toString()
+    outputDir = "$generatedSourcesDir".toString()
+    apiPackage = "io.github.obicco.wealth.api"
+    modelPackage = "io.github.obicco.wealth.model"
+    apiNameSuffix = "Api"
+    generateApiTests = true
+    generateModelTests = true
+    generateApiDocumentation = true
+    configOptions = [
+            interfaceOnly: "true",
+            useTags:       "true",
+            hideGenerationTimestamp: "true",
+            library:       "spring-boot",
+            useSpringBoot3: "true",
+            delegatePattern: "true",
+            openApiNullable: "false",
+    ]
+    importMappings = [
+            'Pageable': 'org.springframework.data.domain.Pageable',
+    ]
+}
+compileJava.dependsOn(tasks.openApiGenerate)
